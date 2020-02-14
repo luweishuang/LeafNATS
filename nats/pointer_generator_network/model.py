@@ -2,11 +2,11 @@
 @author Tian Shi
 Please contact tshi@vt.edu
 '''
-import os
+# import os
 import time
 
-import torch
-from torch.autograd import Variable
+# import torch
+# from torch.autograd import Variable
 
 from LeafNATS.data.summarization.load_single import *
 from LeafNATS.data.utils import construct_vocab

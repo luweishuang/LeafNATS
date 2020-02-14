@@ -4,3 +4,6 @@ LeafNATS/.DS_Store
 LeafNATS/tools/.DS_Store
 LeafNATS/tools/bytecup_process/.DS_Store
 data/
+LeafNATS/tools/bytecup_process/__pycache__/
+LeafNATS/tools/newsroom_process/extract_data/
+LeafNATS/tools/newsroom_process/plain_data/

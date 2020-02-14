@@ -15,11 +15,9 @@ parser = argparse.ArgumentParser()
 '''
 Use in the framework and cannot remove.
 '''
-parser.add_argument('--task', default='train',
-                    help='train | validate | rouge | beam')
+parser.add_argument('--task', default='train', help='train | validate | rouge | beam')
 
-parser.add_argument('--data_dir', default='../sum_data/',
-                    help='directory that store the data.')
+parser.add_argument('--data_dir', default='../sum_data/', help='directory that store the data.')
 parser.add_argument('--file_corpus', default='train.txt',
                     help='file store training documents.')
 parser.add_argument('--file_val', default='val.txt', help='val data')
@@ -27,8 +25,7 @@ parser.add_argument('--file_val', default='val.txt', help='val data')
 parser.add_argument('--n_epoch', type=int, default=35,
                     help='number of epochs.')
 parser.add_argument('--batch_size', type=int, default=16, help='batch size.')
-parser.add_argument('--checkpoint', type=int, default=100,
-                    help='How often you want to save model?')
+parser.add_argument('--checkpoint', type=int, default=100, help='How often you want to save model?')
 parser.add_argument('--val_num_batch', type=int,
                     default=30, help='how many batches')
 parser.add_argument('--nbestmodel', type=int, default=10,
@@ -96,11 +93,8 @@ parser.add_argument('--test_batch_size', type=int, default=1,
 parser.add_argument('--copy_words', type=str2bool,
                     default=True, help='Do you want to copy words?')
 # for app
-parser.add_argument('--app_model_dir', default='../../pg_model/',
-                    help='directory that stores models.')
-parser.add_argument('--app_data_dir', default='../../',
-                    help='directory that stores data.')
-
+parser.add_argument('--app_model_dir', default='../../pg_model/', help='directory that stores models.')
+parser.add_argument('--app_data_dir', default='../../', help='directory that stores data.')
 args = parser.parse_args()
 
 if args.repetition == 'asee' and args.task == 'train':
