@@ -1,11 +1,5 @@
-'''
-@author Tian Shi
-Please contact tshi@vt.edu
-'''
 import argparse
-
 import torch
-
 from LeafNATS.utils.utils import str2bool
 
 parser = argparse.ArgumentParser()

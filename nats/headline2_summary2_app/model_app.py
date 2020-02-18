@@ -1,15 +1,10 @@
-'''
-@author Tian Shi
-Please contact tshi@vt.edu
-'''
-import glob
 import json
-import os
-import time
-
 import spacy
-import torch
-from torch.autograd import Variable
+# import os
+# import time
+# import glob
+# import torch
+# from torch.autograd import Variable
 
 from LeafNATS.data.summarization.load_multitask import *
 from LeafNATS.data.utils import construct_vocab
