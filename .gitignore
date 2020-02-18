@@ -10,6 +10,12 @@ LeafNATS/tools/newsroom_process/extract_data/
 LeafNATS/tools/newsroom_process/plain_data/
 
 LeafNATS/__pycache__/
+LeafNATS/data/__pycache__/
+LeafNATS/data/classification/__pycache__/
+LeafNATS/data/dmsc/__pycache__/
+LeafNATS/data/nli/__pycache__/
+LeafNATS/data/seq2sql/__pycache__/
+LeafNATS/data/summarization/__pycache__/
 LeafNATS/engines/__pycache__/
 LeafNATS/modules/attention/__pycache__/
 LeafNATS/modules/decoder/__pycache__/
