@@ -78,15 +78,12 @@ parser.add_argument('--grad_clip', type=float, default=2.0,
 # for beam search
 parser.add_argument('--file_test', default='test.txt', help='test data')
 parser.add_argument('--beam_size', type=int, default=5, help='beam size.')
-parser.add_argument('--test_batch_size', type=int, default=1,
-                    help='batch size for beam search.')
-parser.add_argument('--copy_words', type=str2bool,
-                    default=True, help='Do you want to copy words?')
+parser.add_argument('--test_batch_size', type=int, default=1, help='batch size for beam search.')
+parser.add_argument('--copy_words', type=str2bool, default=True, help='Do you want to copy words?')
 parser.add_argument('--task_key', default='summary', help='summary | title')
 # for app
 parser.add_argument('--app_model_dir', default='model/', help='directory that stores models.')
-parser.add_argument('--app_data_dir', default='test/',
-                    help='directory that stores data.')
+parser.add_argument('--app_data_dir', default='test/', help='directory that stores data.')
 args = parser.parse_args()
 
 if args.repetition == 'asee' and args.task == 'train':

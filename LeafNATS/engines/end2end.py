@@ -1,9 +1,4 @@
-'''
-@author Tian Shi
-Please contact tshi@vt.edu
-'''
 import glob
-import json
 import os
 import pickle
 import re
@@ -13,7 +8,6 @@ from pprint import pprint
 
 import numpy as np
 import torch
-from torch.autograd import Variable
 
 from LeafNATS.data.utils import create_batch_file
 from LeafNATS.utils.utils import show_progress
@@ -424,3 +418,4 @@ class natsEnd2EndBase(object):
         with torch.no_grad():
             while 1:
                 self.app_worker()
+                break

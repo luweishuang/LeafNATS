@@ -1,10 +1,5 @@
 import json
 import spacy
-# import os
-# import time
-# import glob
-# import torch
-# from torch.autograd import Variable
 
 from LeafNATS.data.summarization.load_multitask import *
 from LeafNATS.data.utils import construct_vocab

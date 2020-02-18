@@ -9,6 +9,8 @@ LeafNATS/tools/bytecup_process/__pycache__/
 LeafNATS/tools/newsroom_process/extract_data/
 LeafNATS/tools/newsroom_process/plain_data/
 
+test/something_out.json
+
 LeafNATS/__pycache__/
 LeafNATS/data/__pycache__/
 LeafNATS/data/classification/__pycache__/
