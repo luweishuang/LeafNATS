@@ -15,13 +15,12 @@ from LeafNATS.modules.embedding.nats_embedding import natsEmbedding
 from LeafNATS.modules.encoder2decoder.nats_encoder2decoder import \
     natsEncoder2Decoder
 from LeafNATS.modules.encoder.nats_encoder_rnn import natsEncoder
-from nats.pointer_generator_network.model import \
-    modelPointerGenerator
+from nats.pointer_generator_network.model import modelPointerGenerator
 from LeafNATS.utils.utils import *
 
 from .beam_search import fast_beam_search
-
-nlp = spacy.load('en', disable=['logging', 'ner'])
+nlp = spacy.load('en_core_web_sm', disable=['logging', 'ner'])
+# nlp=spacy.load('en_core_web_sm')
 
 
 class modelApp(modelPointerGenerator):
