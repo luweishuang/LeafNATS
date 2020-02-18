@@ -18,6 +18,11 @@
 
 #### Step 1
 Download pretrain model from https://drive.google.com/open?id=1A7ODPpermwIHeRrnqvalT5zpr4BCTBi9
+
+#### Step 1_1
+pip install spacy
+pip install /path/to/****/en_core_web_sm-2.2.5.tar.gz(spacy.__version__==2.2.3, pass)
+
 #### Step 2
 Create a folder such as ```data```.
 #### Step 3
