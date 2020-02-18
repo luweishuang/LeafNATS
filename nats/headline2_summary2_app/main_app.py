@@ -35,7 +35,7 @@ parser.add_argument('--is_lower', type=str2bool, default=True,
 '''
 User specified parameters.
 '''
-parser.add_argument('--device', default=torch.device("cuda:0"), help='device')
+parser.add_argument('--device', default=torch.device("cpu"), help='device')    # "cuda:0"
 parser.add_argument('--file_vocab', default='vocab',
                     help='file store training vocabulary.')
 
@@ -85,9 +85,8 @@ parser.add_argument('--copy_words', type=str2bool,
 parser.add_argument('--task_key', default='summary', help='summary | title')
 # for app
 parser.add_argument('--app_model_dir', default='model/', help='directory that stores models.')
-parser.add_argument('--app_data_dir', default='/var/www/html/leafNATS/tmp',
+parser.add_argument('--app_data_dir', default='test/',
                     help='directory that stores data.')
-
 args = parser.parse_args()
 
 if args.repetition == 'asee' and args.task == 'train':
