@@ -20,7 +20,6 @@ from LeafNATS.utils.utils import *
 
 from .beam_search import fast_beam_search
 nlp = spacy.load('en_core_web_sm', disable=['logging', 'ner'])
-# nlp=spacy.load('en_core_web_sm')
 
 
 class modelApp(modelPointerGenerator):

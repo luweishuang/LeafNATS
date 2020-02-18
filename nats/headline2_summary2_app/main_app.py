@@ -17,12 +17,9 @@ parser.add_argument('--file_val', default='val.txt', help='val data')
 parser.add_argument('--n_epoch', type=int, default=35,
                     help='number of epochs.')
 parser.add_argument('--batch_size', type=int, default=16, help='batch size.')
-parser.add_argument('--checkpoint', type=int, default=100,
-                    help='How often you want to save model?')
-parser.add_argument('--val_num_batch', type=int,
-                    default=30, help='how many batches')
-parser.add_argument('--nbestmodel', type=int, default=10,
-                    help='How many models you want to keep?')
+parser.add_argument('--checkpoint', type=int, default=100, help='How often you want to save model?')
+parser.add_argument('--val_num_batch', type=int, default=30, help='how many batches')
+parser.add_argument('--nbestmodel', type=int, default=10, help='How many models you want to keep?')
 
 parser.add_argument('--continue_training', type=str2bool,
                     default=True, help='Do you want to continue?')
@@ -87,8 +84,7 @@ parser.add_argument('--copy_words', type=str2bool,
                     default=True, help='Do you want to copy words?')
 parser.add_argument('--task_key', default='summary', help='summary | title')
 # for app
-parser.add_argument('--app_model_dir', default='../model/',
-                    help='directory that stores models.')
+parser.add_argument('--app_model_dir', default='model/', help='directory that stores models.')
 parser.add_argument('--app_data_dir', default='/var/www/html/leafNATS/tmp',
                     help='directory that stores data.')
 
