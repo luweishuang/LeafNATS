@@ -1,14 +1,5 @@
-'''
-@author Tian Shi
-Please contact tshi@vt.edu
-'''
-import glob
 import os
-import random
 import re
-import shutil
-
-import numpy as np
 import torch
 from torch.autograd import Variable
 
@@ -175,5 +166,4 @@ def process_batch(batch_id, path_,
             for itm in output['trg_idx_ex']]
         output['trg_output_var_ex'] = Variable(
             torch.LongTensor(output['trg_output_idx_ex']))
-
     return output

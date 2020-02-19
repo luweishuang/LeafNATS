@@ -1,3 +1,5 @@
+#! -*- coding: utf-8 -*-
+
 import glob
 import os
 import pickle
@@ -5,7 +7,6 @@ import re
 import shutil
 import time
 from pprint import pprint
-
 import numpy as np
 import torch
 
@@ -405,8 +406,9 @@ class natsEnd2EndBase(object):
         For the application.
         Don't overwrite.
         '''
-        self.build_vocabulary()
-        self.build_models()
+        self.build_vocabulary()    # 构建字典 vocab2id, id2vocab **
+        self.build_models()        # 构建网络结构     encoder | encoder2decoder | pgdecoder | decoder2proj  ++  newsroom_title | bytecup_title | newsroom_summary | cnndm_summary
+
         for model_name in self.train_models:
             self.base_models[model_name] = self.train_models[model_name]
         pprint(self.base_models)

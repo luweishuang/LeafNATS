@@ -1,11 +1,5 @@
-'''
-@author Tian Shi
-Please contact tshi@vt.edu
-'''
 import sys
-import numpy as np
-import torch
-from torch.autograd import Variable
+import argparse
 
 def show_progress(curr_, total_, time=""):
     '''
@@ -15,6 +9,7 @@ def show_progress(curr_, total_, time=""):
     dstr = '[' + '>'*int(round(prog_/4)) + ' '*(25-int(round(prog_/4))) + ']'
     sys.stdout.write(dstr + str(prog_) + '%' + time +'\r')
     sys.stdout.flush()
+
 
 def str2bool(input_):
     '''
@@ -27,6 +22,7 @@ def str2bool(input_):
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
+
 def tensor_transformer(seq0, batch_size, beam_size):
     '''
     This function is used in beam search
@@ -34,5 +30,4 @@ def tensor_transformer(seq0, batch_size, beam_size):
     seq = seq0.unsqueeze(2)
     seq = seq.repeat(1, 1, beam_size, 1)
     seq = seq.contiguous().view(batch_size, beam_size*beam_size, seq.size(3))
-
     return seq

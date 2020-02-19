@@ -1,27 +1,23 @@
 import json
 import spacy
-
+import glob
+import numpy as np
 from LeafNATS.data.summarization.load_multitask import *
-from LeafNATS.data.utils import construct_vocab
-from LeafNATS.modules.decoder.nats_decoder_pointer_generator import \
-    PointerGeneratorDecoder
+from LeafNATS.modules.decoder.nats_decoder_pointer_generator import PointerGeneratorDecoder
 from LeafNATS.modules.decoding.word_copy import word_copy
 from LeafNATS.modules.embedding.nats_embedding import natsEmbedding
-from LeafNATS.modules.encoder2decoder.nats_encoder2decoder import \
-    natsEncoder2Decoder
+from LeafNATS.modules.encoder2decoder.nats_encoder2decoder import natsEncoder2Decoder
 from LeafNATS.modules.encoder.nats_encoder_rnn import natsEncoder
 from nats.pointer_generator_network.model import modelPointerGenerator
-from LeafNATS.utils.utils import *
+
 
 from .beam_search import fast_beam_search
 nlp = spacy.load('en_core_web_sm', disable=['logging', 'ner'])
 
 
 class modelApp(modelPointerGenerator):
-
     def __init__(self, args):
         super(modelApp, self).__init__(args=args)
-
         self.args.data_dir = self.args.app_model_dir
 
     def build_models(self):
@@ -162,11 +158,9 @@ class modelApp(modelPointerGenerator):
                 fl_, map_location=lambda storage, loc: storage))
 
     def attnWeight2rgbPercent(self, input_):
-
         maxV = np.max(input_)
         minV = np.min(input_)
         output_ = (input_ - minV) / (maxV - minV)
-
         return output_
 
     def app_worker(self):

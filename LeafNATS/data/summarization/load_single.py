@@ -1,16 +1,8 @@
 '''
-@author Tian Shi
-Please contact tshi@vt.edu
-
 Users need to rewrite this file based on their data format.
 '''
-import glob
 import os
-import random
 import re
-import shutil
-
-import numpy as np
 import torch
 from torch.autograd import Variable
 

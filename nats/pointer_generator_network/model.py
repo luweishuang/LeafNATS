@@ -1,22 +1,12 @@
-'''
-@author Tian Shi
-Please contact tshi@vt.edu
-'''
-# import os
 import time
-
-# import torch
-# from torch.autograd import Variable
 
 from LeafNATS.data.summarization.load_single import *
 from LeafNATS.data.utils import construct_vocab
 from LeafNATS.engines.end2end import natsEnd2EndBase
-from LeafNATS.modules.decoder.nats_decoder_pointer_generator import \
-    PointerGeneratorDecoder
+from LeafNATS.modules.decoder.nats_decoder_pointer_generator import PointerGeneratorDecoder
 from LeafNATS.modules.decoding.word_copy import word_copy
 from LeafNATS.modules.embedding.nats_embedding import natsEmbedding
-from LeafNATS.modules.encoder2decoder.nats_encoder2decoder import \
-    natsEncoder2Decoder
+from LeafNATS.modules.encoder2decoder.nats_encoder2decoder import natsEncoder2Decoder
 from LeafNATS.modules.encoder.nats_encoder_rnn import natsEncoder
 from LeafNATS.utils.utils import *
 
@@ -150,15 +140,11 @@ class modelPointerGenerator(natsEnd2EndBase):
         src_seq_len = self.batch_data['src_var'].size(1)
         trg_seq_len = trg_emb.size(1)
         if self.args.repetition == 'temporal':
-            past_attn = Variable(torch.ones(
-                batch_size, src_seq_len)).to(self.args.device)
+            past_attn = Variable(torch.ones(batch_size, src_seq_len)).to(self.args.device)
         else:
-            past_attn = Variable(torch.zeros(
-                batch_size, src_seq_len)).to(self.args.device)
-        h_attn = Variable(torch.zeros(batch_size, self.args.trg_hidden_dim)).to(
-            self.args.device)
-        p_gen = Variable(torch.zeros(batch_size, trg_seq_len)
-                         ).to(self.args.device)
+            past_attn = Variable(torch.zeros(batch_size, src_seq_len)).to(self.args.device)
+        h_attn = Variable(torch.zeros(batch_size, self.args.trg_hidden_dim)).to(self.args.device)
+        p_gen = Variable(torch.zeros(batch_size, trg_seq_len)).to(self.args.device)
         past_dehy = Variable(torch.zeros(1, 1)).to(self.args.device)
 
         trg_h, _, _, attn_, _, p_gen, _, loss_cv = self.train_models['pgdecoder'](
@@ -182,35 +168,27 @@ class modelPointerGenerator(natsEnd2EndBase):
         if self.args.pointer_net:
             if self.args.oov_explicit:
                 logits_ex = Variable(torch.zeros(1, 1, 1)).to(self.args.device)
-                logits_ex = logits_ex.repeat(
-                    batch_size, trg_seq_len, ex_vocab_size)
+                logits_ex = logits_ex.repeat(batch_size, trg_seq_len, ex_vocab_size)
                 if ex_vocab_size > 0:
                     logits_ = torch.cat((logits_, logits_ex), -1)
                 # pointer
                 attn_ = attn_.transpose(0, 1)
                 # calculate index matrix
-                pt_idx = Variable(torch.FloatTensor(
-                    torch.zeros(1, 1, 1))).to(self.args.device)
+                pt_idx = Variable(torch.FloatTensor(torch.zeros(1, 1, 1))).to(self.args.device)
                 pt_idx = pt_idx.repeat(batch_size, src_seq_len, vocab_size)
-                pt_idx.scatter_(
-                    2, self.batch_data['src_var_ex'].unsqueeze(2), 1.0)
-                logits_ = p_gen.unsqueeze(
-                    2)*logits_ + (1.0-p_gen.unsqueeze(2))*torch.bmm(attn_, pt_idx)
+                pt_idx.scatter_(2, self.batch_data['src_var_ex'].unsqueeze(2), 1.0)
+                logits_ = p_gen.unsqueeze(2)*logits_ + (1.0-p_gen.unsqueeze(2))*torch.bmm(attn_, pt_idx)
                 logits_ = logits_ + 1e-20
             else:
                 attn_ = attn_.transpose(0, 1)
-                pt_idx = Variable(torch.FloatTensor(
-                    torch.zeros(1, 1, 1))).to(self.args.device)
+                pt_idx = Variable(torch.FloatTensor(torch.zeros(1, 1, 1))).to(self.args.device)
                 pt_idx = pt_idx.repeat(batch_size, src_seq_len, vocab_size)
-                pt_idx.scatter_(
-                    2, self.batch_data['src_var'].unsqueeze(2), 1.0)
-                logits_ = p_gen.unsqueeze(
-                    2)*logits_ + (1.0-p_gen.unsqueeze(2))*torch.bmm(attn_, pt_idx)
+                pt_idx.scatter_(2, self.batch_data['src_var'].unsqueeze(2), 1.0)
+                logits_ = p_gen.unsqueeze(2)*logits_ + (1.0-p_gen.unsqueeze(2))*torch.bmm(attn_, pt_idx)
 
         weight_mask = torch.ones(vocab_size).to(self.args.device)
         weight_mask[self.batch_data['vocab2id']['<pad>']] = 0
-        loss_criterion = torch.nn.NLLLoss(
-            weight=weight_mask).to(self.args.device)
+        loss_criterion = torch.nn.NLLLoss(weight=weight_mask).to(self.args.device)
 
         logits_ = torch.log(logits_)
         loss = loss_criterion(

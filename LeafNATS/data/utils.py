@@ -1,21 +1,12 @@
-'''
-@author Tian Shi
-Please contact tshi@vt.edu
-'''
-import glob
+
 import os
 import random
 import re
 import shutil
-
 import numpy as np
-import torch
-from torch.autograd import Variable
 
 
-def construct_vocab(file_,
-                    max_size=200000,
-                    mincount=5):
+def construct_vocab(file_, max_size=200000, mincount=5):
     '''
     Construct vocabulary
     token<sec>count
@@ -42,12 +33,10 @@ def construct_vocab(file_,
                 cnt += 1
             if len(vocab2id) == max_size:
                 break
-
     return vocab2id, id2vocab
 
 
-def load_vocab_pretrain(file_pretrain_vocab,
-                        file_pretrain_vec):
+def load_vocab_pretrain(file_pretrain_vocab, file_pretrain_vec):
     '''
     Load pretrained embedding
     token<sec>count
@@ -76,7 +65,6 @@ def load_vocab_pretrain(file_pretrain_vocab,
     pretrain_vec = np.load(file_pretrain_vec)
     pad_vec = np.zeros([pad_cnt, pretrain_vec.shape[1]])
     pretrain_vec = np.vstack((pad_vec, pretrain_vec))
-
     return vocab2id, id2vocab, pretrain_vec
 
 
@@ -104,7 +92,6 @@ def construct_pos_vocab(file_):
             vocab2id[arr[0]] = cnt
             id2vocab[cnt] = arr[0]
             cnt += 1
-
     return vocab2id, id2vocab
 
 
@@ -132,7 +119,6 @@ def construct_char_vocab(file_):
             vocab2id[arr[0]] = cnt
             id2vocab[cnt] = arr[0]
             cnt += 1
-
     return vocab2id, id2vocab
 
 
@@ -191,7 +177,6 @@ def create_batch_file(path_data,  # path to data dir
         fout.close()
         arr = []
         cnt += 1
-
     return cnt
 
 
@@ -233,5 +218,4 @@ def create_batch_memory(path_,  # path to data
     if len(arr) > 0:
         data_split.append(arr)
         arr = []
-
     return data_split
