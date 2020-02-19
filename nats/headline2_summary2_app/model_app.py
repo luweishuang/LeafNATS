@@ -170,14 +170,10 @@ class modelApp(modelPointerGenerator):
             files_ = glob.glob(os.path.join(self.args.app_data_dir, '*_in.json'))
             for curr_file in files_:
                 print("Read {}.".format(curr_file))
-                fTmp = re.split('\ ', curr_file)[0]
+                fTmp = re.split('\_', curr_file)[0]
                 with open(curr_file, 'r') as fp:
                     data_input = json.load(fp)
                 article = nlp(data_input['content'].lower())
-
-                # doc = nlp(u"Spacy is breaking when combining custom tokenizer's token_match, access https://github.com/explosion/spaCy to get details")
-                # print([t.text for t in doc])
-
                 article = ' '.join([wd.text for wd in article])
                 article = re.split('\s', article)
                 article = list(filter(None, article))
@@ -228,4 +224,3 @@ class modelApp(modelPointerGenerator):
                 json.dump(data_input, fout)
                 fout.close()
 
-                os.unlink(curr_file)
