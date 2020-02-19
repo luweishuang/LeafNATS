@@ -403,23 +403,19 @@ def process_data_app(data, vocab2id, src_lens):
 
     dart = data["content_token"]
     src_arr.append(dart)
-    dart2id = [vocab2id[wd] if wd in vocab2id else vocab2id['<unk>']
-               for wd in dart]
+    dart2id = [vocab2id[wd] if wd in vocab2id else vocab2id['<unk>'] for wd in dart]
     src_idx.append(dart2id)
-    dart2id = [vocab2id[wd] if wd in vocab2id else ext_vocab[wd]
-               for wd in dart]
+    dart2id = [vocab2id[wd] if wd in vocab2id else ext_vocab[wd] for wd in dart]
     src_idx_ex.append(dart2id)
     dart2wt = [0.0 if wd in vocab2id else 1.0 for wd in dart]
     src_wt.append(dart2wt)
 
     src_idx = [itm[:src_lens] for itm in src_idx]
-    src_idx = [itm + [vocab2id['<pad>']] *
-               (src_lens-len(itm)) for itm in src_idx]
+    src_idx = [itm + [vocab2id['<pad>']] * (src_lens-len(itm)) for itm in src_idx]
     src_var = Variable(torch.LongTensor(src_idx))
 
     src_idx_ex = [itm[:src_lens] for itm in src_idx_ex]
-    src_idx_ex = [itm + [vocab2id['<pad>']] *
-                  (src_lens-len(itm)) for itm in src_idx_ex]
+    src_idx_ex = [itm + [vocab2id['<pad>']] * (src_lens-len(itm)) for itm in src_idx_ex]
     src_var_ex = Variable(torch.LongTensor(src_idx_ex))
 
     src_wt = [itm[:src_lens] for itm in src_wt]
@@ -428,5 +424,4 @@ def process_data_app(data, vocab2id, src_lens):
 
     src_arr = [itm[:src_lens] for itm in src_arr]
     src_arr = [itm + ['<pad>']*(src_lens-len(itm)) for itm in src_arr]
-
     return ext_id2oov, src_var, src_var_ex, src_arr, src_msk

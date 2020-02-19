@@ -154,8 +154,7 @@ class modelApp(modelPointerGenerator):
         '''
         for model_name in self.base_models:
             fl_ = os.path.join(self.args.app_model_dir, model_name+'.model')
-            self.base_models[model_name].load_state_dict(torch.load(
-                fl_, map_location=lambda storage, loc: storage))
+            self.base_models[model_name].load_state_dict(torch.load(fl_, map_location=lambda storage, loc: storage))
 
     def attnWeight2rgbPercent(self, input_):
         maxV = np.max(input_)
@@ -168,24 +167,24 @@ class modelApp(modelPointerGenerator):
         For the beam search in application.
         '''
         with torch.no_grad():
-            files_ = glob.glob(os.path.join(
-                self.args.app_data_dir, '*_in.json'))
+            files_ = glob.glob(os.path.join(self.args.app_data_dir, '*_in.json'))
             for curr_file in files_:
                 print("Read {}.".format(curr_file))
-                fTmp = re.split('\_', curr_file)[0]
-                fp = open(curr_file, 'r')
-                data_input = json.load(fp)
-                fp.close()
+                fTmp = re.split('\ ', curr_file)[0]
+                with open(curr_file, 'r') as fp:
+                    data_input = json.load(fp)
                 article = nlp(data_input['content'].lower())
+
+                # doc = nlp(u"Spacy is breaking when combining custom tokenizer's token_match, access https://github.com/explosion/spaCy to get details")
+                # print([t.text for t in doc])
+
                 article = ' '.join([wd.text for wd in article])
                 article = re.split('\s', article)
                 article = list(filter(None, article))
                 data_input['content_token'] = article
-
                 self.args.src_seq_lens = len(article)
-                ext_id2oov, src_var, src_var_ex, src_arr, src_msk = \
-                    process_data_app(
-                        data_input, self.batch_data['vocab2id'], self.args.src_seq_lens)
+
+                ext_id2oov, src_var, src_var_ex, src_arr, src_msk = process_data_app(data_input, self.batch_data['vocab2id'], self.args.src_seq_lens)
                 self.batch_data['ext_id2oov'] = ext_id2oov
                 src_msk = src_msk.to(self.args.device)
 
@@ -198,85 +197,31 @@ class modelApp(modelPointerGenerator):
                 else:
                     src_text_rep_ex = src_text_rep.clone()
 
+                def inner_func(cur_task_key):
+                    beam_seq, beam_prb, beam_attn_ = fast_beam_search(
+                        self.args, self.base_models, self.batch_data,
+                        src_text_rep, src_text_rep_ex, curr_batch_size, cur_task_key)
+                    beam_out = beam_attn_[:, :, 0].squeeze()[:, :self.args.src_seq_lens].data.cpu().numpy()
+                    beam_out = self.attnWeight2rgbPercent(beam_out)
+                    trg_arr = word_copy(
+                        self.args, beam_seq, beam_attn_, src_msk, src_arr, curr_batch_size,
+                        self.batch_data['id2vocab'], self.batch_data['ext_id2oov'])
+                    trg_arr = re.split('\s', trg_arr[0])
+                    out_arr = []
+                    for idx, wd in enumerate(trg_arr):
+                        if wd == '<stop>':
+                            break
+                        if wd != '<s>' and wd != '</s>':
+                            out_arr.append({"key": wd, "attention": beam_out[idx].tolist()})
+                    data_input[cur_task_key] = out_arr
+
                 self.args.task_key = 'newsroom_title'
-                beam_seq, beam_prb, beam_attn_ = fast_beam_search(
-                    self.args, self.base_models, self.batch_data,
-                    src_text_rep, src_text_rep_ex, curr_batch_size, self.args.task_key)
-                beam_out = beam_attn_[:, :, 0].squeeze(
-                )[:, :self.args.src_seq_lens].data.cpu().numpy()
-                beam_out = self.attnWeight2rgbPercent(beam_out)
-                trg_arr = word_copy(
-                    self.args, beam_seq, beam_attn_, src_msk, src_arr, curr_batch_size,
-                    self.batch_data['id2vocab'], self.batch_data['ext_id2oov'])
-                trg_arr = re.split('\s', trg_arr[0])
-                out_arr = []
-                for idx, wd in enumerate(trg_arr):
-                    if wd == '<stop>':
-                        break
-                    if wd != '<s>' and wd != '</s>':
-                        out_arr.append(
-                            {"key": wd, "attention": beam_out[idx].tolist()})
-                data_input[self.args.task_key] = out_arr
-
+                inner_func(self.args.task_key)
                 self.args.task_key = 'newsroom_summary'
-                beam_seq, beam_prb, beam_attn_ = fast_beam_search(
-                    self.args, self.base_models, self.batch_data,
-                    src_text_rep, src_text_rep_ex, curr_batch_size, self.args.task_key)
-                beam_out = beam_attn_[:, :, 0].squeeze(
-                )[:, :self.args.src_seq_lens].data.cpu().numpy()
-                beam_out = self.attnWeight2rgbPercent(beam_out)
-                trg_arr = word_copy(
-                    self.args, beam_seq, beam_attn_, src_msk, src_arr, curr_batch_size,
-                    self.batch_data['id2vocab'], self.batch_data['ext_id2oov'])
-                trg_arr = re.split('\s', trg_arr[0])
-                out_arr = []
-                for idx, wd in enumerate(trg_arr):
-                    if wd == '<stop>':
-                        break
-                    if wd != '<s>' and wd != '</s>':
-                        out_arr.append(
-                            {"key": wd, "attention": beam_out[idx].tolist()})
-                data_input[self.args.task_key] = out_arr
-
+                inner_func(self.args.task_key)
                 self.args.task_key = 'cnndm_summary'
-                beam_seq, beam_prb, beam_attn_ = fast_beam_search(
-                    self.args, self.base_models, self.batch_data,
-                    src_text_rep, src_text_rep_ex, curr_batch_size, self.args.task_key)
-                beam_out = beam_attn_[:, :, 0].squeeze(
-                )[:, :self.args.src_seq_lens].data.cpu().numpy()
-                beam_out = self.attnWeight2rgbPercent(beam_out)
-                trg_arr = word_copy(
-                    self.args, beam_seq, beam_attn_, src_msk, src_arr, curr_batch_size,
-                    self.batch_data['id2vocab'], self.batch_data['ext_id2oov'])
-                trg_arr = re.split('\s', trg_arr[0])
-                out_arr = []
-                for idx, wd in enumerate(trg_arr):
-                    if wd == '<stop>':
-                        break
-                    if wd != '<s>' and wd != '</s>':
-                        out_arr.append(
-                            {"key": wd, "attention": beam_out[idx].tolist()})
-                data_input[self.args.task_key] = out_arr
-
+                inner_func(self.args.task_key)
                 self.args.task_key = 'bytecup_title'
-                beam_seq, beam_prb, beam_attn_ = fast_beam_search(
-                    self.args, self.base_models, self.batch_data,
-                    src_text_rep, src_text_rep_ex, curr_batch_size, self.args.task_key)
-                beam_out = beam_attn_[:, :, 0].squeeze(
-                )[:, :self.args.src_seq_lens].data.cpu().numpy()
-                beam_out = self.attnWeight2rgbPercent(beam_out)
-                trg_arr = word_copy(
-                    self.args, beam_seq, beam_attn_, src_msk, src_arr, curr_batch_size,
-                    self.batch_data['id2vocab'], self.batch_data['ext_id2oov'])
-                trg_arr = re.split('\s', trg_arr[0])
-                out_arr = []
-                for idx, wd in enumerate(trg_arr):
-                    if wd == '<stop>':
-                        break
-                    if wd != '<s>' and wd != '</s>':
-                        out_arr.append(
-                            {"key": wd, "attention": beam_out[idx].tolist()})
-                data_input[self.args.task_key] = out_arr
 
                 print('Write {}.'.format(fTmp+'_out.json'))
                 fout = open(fTmp+'_out.json', 'w')
