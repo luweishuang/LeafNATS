@@ -218,6 +218,7 @@ class modelApp(modelPointerGenerator):
                 self.args.task_key = 'cnndm_summary'
                 inner_func(self.args.task_key)
                 self.args.task_key = 'bytecup_title'
+                inner_func(self.args.task_key)
 
                 print('Write {}.'.format(fTmp+'_out.json'))
                 fout = open(fTmp+'_out.json', 'w')
