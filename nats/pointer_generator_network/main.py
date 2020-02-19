@@ -1,13 +1,10 @@
 import argparse
 import torch
 from LeafNATS.eval_scripts.eval_pyrouge import run_pyrouge
-# from LeafNATS.utils.utils import str2bool
 from .model import modelPointerGenerator
 
 parser = argparse.ArgumentParser()
-'''
-Use in the framework and cannot remove.
-'''
+# Use in the framework and cannot remove.
 parser.add_argument('--task', default='train', help='train | validate | rouge | beam')
 parser.add_argument('--data_dir', default='../sum_data/', help='directory that store the data.')
 parser.add_argument('--file_corpus', default='train.txt', help='file store training documents.')
