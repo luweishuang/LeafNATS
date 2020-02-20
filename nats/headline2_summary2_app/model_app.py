@@ -171,8 +171,10 @@ class modelApp(modelPointerGenerator):
             for curr_file in files_:
                 print("Read {}.".format(curr_file))
                 fTmp = re.split('\_', curr_file)[0]
+                data_output = {}
                 with open(curr_file, 'r') as fp:
                     data_input = json.load(fp)
+                data_output['content'] = data_input['content']
                 article = nlp(data_input['content'].lower())
                 article = ' '.join([wd.text for wd in article])
                 article = re.split('\s', article)
@@ -208,8 +210,10 @@ class modelApp(modelPointerGenerator):
                         if wd == '<stop>':
                             break
                         if wd != '<s>' and wd != '</s>':
-                            out_arr.append({"key": wd, "attention": beam_out[idx].tolist()})
+                            # out_arr.append({"key": wd, "attention": beam_out[idx].tolist()})
+                            out_arr.append(wd)
                     data_input[cur_task_key] = out_arr
+                    data_output[cur_task_key] = ' '.join(out_arr)
 
                 self.args.task_key = 'newsroom_title'
                 inner_func(self.args.task_key)
@@ -221,7 +225,7 @@ class modelApp(modelPointerGenerator):
                 inner_func(self.args.task_key)
 
                 print('Write {}.'.format(fTmp+'_out.json'))
-                fout = open(fTmp+'_out.json', 'w')
-                json.dump(data_input, fout)
-                fout.close()
+                with open(fTmp+'_out.json', 'w') as fout:
+                    json.dump(data_output, fout)
+
 
