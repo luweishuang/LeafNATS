@@ -5,8 +5,8 @@ from .model import modelPointerGenerator
 
 parser = argparse.ArgumentParser()
 # Use in the framework and cannot remove.
-parser.add_argument('--task', default='train', help='train | validate | rouge | beam')
-parser.add_argument('--data_dir', default='src_data/sum_data_bytecup2018', help='directory that store the data.')
+parser.add_argument('--task', default='app', help='train | validate | rouge | beam')
+parser.add_argument('--data_dir', default='src_data/bytecup2018_title', help='directory that store the data.')
 parser.add_argument('--file_corpus', default='train.txt', help='file store training documents.')
 parser.add_argument('--file_val', default='val.txt', help='val data')
 parser.add_argument('--n_epoch', type=int, default=35, help='number of epochs.')
@@ -52,7 +52,7 @@ parser.add_argument('--beam_size', type=int, default=5, help='beam size.')
 parser.add_argument('--test_batch_size', type=int, default=1, help='batch size for beam search.')
 parser.add_argument('--copy_words', type=bool, default=True, help='Do you want to copy words?')
 # for app
-parser.add_argument('--app_model_dir', default='../../pg_model/', help='directory that stores models.')
+parser.add_argument('--app_model_dir', default='../pg_model/', help='directory that stores models.')
 parser.add_argument('--app_data_dir', default='../../', help='directory that stores data.')
 args = parser.parse_args()
 
@@ -70,10 +70,8 @@ if args.task == "validate":
     model.validate()
 if args.task == "beam":
     model.test()
-
 if args.task == "rouge":
     run_pyrouge(args)
-
 if args.task == "app":
     from .model_app import modelPGApp
 

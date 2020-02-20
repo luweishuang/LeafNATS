@@ -74,13 +74,8 @@ def process_minibatch(batch_id, path_,
 def process_minibatch_explicit(batch_id, path_,
                                fkey_, batch_size,
                                vocab2id, max_lens=[400, 100]):
-    '''
-    Process the minibatch. 
-    OOV explicit, i.e., build extended vocabulary.
-    '''
-
-    file_ = os.path.join(path_, 'batch_{}_{}'.format(
-        fkey_, batch_size), str(batch_id))
+    # Process the minibatch. OOV explicit, i.e., build extended vocabulary.
+    file_ = os.path.join(path_, 'batch_{}_{}'.format(fkey_, batch_size), str(batch_id))
     # build extended vocabulary
     fp = open(file_, 'r')
     ext_vocab = {}
@@ -182,20 +177,11 @@ def process_minibatch_explicit(batch_id, path_,
     # extend oov
     src_var_ex = Variable(torch.LongTensor(src_arr_ex))
     trg_output_var_ex = Variable(torch.LongTensor(trg_output_arr_ex))
-
-    return ext_id2oov, src_var, trg_input_var, \
-        src_var_ex, trg_output_var_ex
+    return ext_id2oov, src_var, trg_input_var, src_var_ex, trg_output_var_ex
 
 
-def process_minibatch_test(batch_id, path_,
-                           fkey_, batch_size,
-                           vocab2id, src_lens):
-    '''
-    Process the minibatch test
-    '''
-
-    file_ = os.path.join(path_, 'batch_{}_{}'.format(
-        fkey_, batch_size), str(batch_id))
+def process_minibatch_test(batch_id, path_, fkey_, batch_size, vocab2id, src_lens):
+    file_ = os.path.join(path_, 'batch_{}_{}'.format(fkey_, batch_size), str(batch_id))
     fp = open(file_, 'r')
     src_arr = []
     src_idx = []

@@ -139,7 +139,6 @@ def create_batch_file(path_data,  # path to data dir
     '''
     file_name = os.path.join(path_data, file_)
     folder = os.path.join(path_work, 'batch_'+fkey_+'_'+str(batch_size))
-
     try:
         shutil.rmtree(folder)
         os.mkdir(folder)
@@ -147,12 +146,11 @@ def create_batch_file(path_data,  # path to data dir
         os.mkdir(folder)
 
     corpus_arr = []
-    fp = open(file_name, 'r', encoding="iso-8859-1")
-    for line in fp:
-        if is_lower:
-            line = line.lower()
-        corpus_arr.append(line)
-    fp.close()
+    with open(file_name, 'r', encoding="iso-8859-1") as fp:
+        for line in fp:
+            if is_lower:
+                line = line.lower()
+            corpus_arr.append(line)
     if is_shuffle:
         random.shuffle(corpus_arr)
 
@@ -163,18 +161,16 @@ def create_batch_file(path_data,  # path to data dir
         except:
             arr = [itm]
         if len(arr) == batch_size:
-            fout = open(os.path.join(folder, str(cnt)), 'w')
-            for sen in arr:
-                fout.write(sen)
-            fout.close()
+            with open(os.path.join(folder, str(cnt)), 'w') as fout:
+                for sen in arr:
+                    fout.write(sen)
             arr = []
             cnt += 1
 
     if len(arr) > 0:
-        fout = open(os.path.join(folder, str(cnt)), 'w')
-        for sen in arr:
-            fout.write(sen)
-        fout.close()
+        with open(os.path.join(folder, str(cnt)), 'w') as fout:
+            for sen in arr:
+                fout.write(sen)
         arr = []
         cnt += 1
     return cnt

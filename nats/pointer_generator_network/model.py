@@ -14,17 +14,10 @@ from .beam_search import fast_beam_search
 
 
 class modelPointerGenerator(natsEnd2EndBase):
-    '''
-    pointer generator network
-    '''
-
     def __init__(self, args):
         super(modelPointerGenerator, self).__init__(args=args)
 
     def build_vocabulary(self):
-        '''
-        vocabulary
-        '''
         vocab2id, id2vocab = construct_vocab(
             file_=os.path.join(self.args.data_dir, self.args.file_vocab),
             max_size=self.args.max_vocab_size,
@@ -84,13 +77,10 @@ class modelPointerGenerator(natsEnd2EndBase):
         init model optimizer
         '''
         optimizer = torch.optim.Adam(params, lr=self.args.learning_rate)
-
         return optimizer
 
     def build_batch(self, batch_id):
-        '''
-        get batch data
-        '''
+        # get batch data
         if self.args.oov_explicit:
             ext_id2oov, src_var, trg_input_var, \
                 src_var_ex, trg_output_var = process_minibatch_explicit(
@@ -128,13 +118,10 @@ class modelPointerGenerator(natsEnd2EndBase):
         '''
         here we have all data flow from the input to output
         '''
-        src_emb = self.train_models['embedding'].get_embedding(
-            self.batch_data['src_var'])
+        src_emb = self.train_models['embedding'].get_embedding(self.batch_data['src_var'])
         encoder_hy, hidden_encoder = self.train_models['encoder'](src_emb)
         hidden_decoder = self.train_models['encoder2decoder'](hidden_encoder)
-
-        trg_emb = self.train_models['embedding'].get_embedding(
-            self.batch_data['trg_input_var'])
+        trg_emb = self.train_models['embedding'].get_embedding(self.batch_data['trg_input_var'])
 
         batch_size = self.batch_data['src_var'].size(0)
         src_seq_len = self.batch_data['src_var'].size(1)
@@ -151,13 +138,11 @@ class modelPointerGenerator(natsEnd2EndBase):
             0, trg_emb, hidden_decoder, h_attn, encoder_hy, past_attn, p_gen, past_dehy)
 
         # prepare output
-        trg_h_reshape = trg_h.contiguous().view(
-            trg_h.size(0)*trg_h.size(1), trg_h.size(2))
+        trg_h_reshape = trg_h.contiguous().view(trg_h.size(0)*trg_h.size(1), trg_h.size(2))
         # consume a lot of memory.
         if self.args.share_emb_weight:
             decoder_proj = self.train_models['decoder2proj'](trg_h_reshape)
-            logits_ = self.train_models['embedding'].get_decode2vocab(
-                decoder_proj)
+            logits_ = self.train_models['embedding'].get_decode2vocab(decoder_proj)
         else:
             logits_ = self.train_models['decoder2vocab'](trg_h_reshape)
         logits_ = logits_.view(trg_h.size(0), trg_h.size(1), logits_.size(1))
@@ -194,10 +179,8 @@ class modelPointerGenerator(natsEnd2EndBase):
         loss = loss_criterion(
             logits_.contiguous().view(-1, vocab_size),
             self.batch_data['trg_output_var'].view(-1))
-
         if self.args.repetition == 'asee_train':
             loss = loss + loss_cv[0]
-
         return loss
 
     def test_worker(self, _nbatch):
@@ -205,8 +188,7 @@ class modelPointerGenerator(natsEnd2EndBase):
         For the beam search in testing.
         '''
         start_time = time.time()
-        fout = open(os.path.join('..', 'nats_results',
-                                 self.args.file_output), 'w')
+        fout = open(os.path.join('..', 'nats_results', self.args.file_output), 'w')
         for batch_id in range(_nbatch):
             ext_id2oov, src_var, src_var_ex, src_arr, src_msk, trg_arr \
                 = process_minibatch_explicit_test(
@@ -247,6 +229,5 @@ class modelPointerGenerator(natsEnd2EndBase):
                 fout.write('<sec>'.join([out_arr[k], trg_arr[k]])+'\n')
 
             end_time = time.time()
-            show_progress(batch_id, _nbatch, str(
-                (end_time-start_time)/3600)[:8]+"h")
+            show_progress(batch_id, _nbatch, str((end_time-start_time)/3600)[:8]+"h")
         fout.close()
