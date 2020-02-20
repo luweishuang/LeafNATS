@@ -6,7 +6,7 @@ from .model import modelPointerGenerator
 parser = argparse.ArgumentParser()
 # Use in the framework and cannot remove.
 parser.add_argument('--task', default='train', help='train | validate | rouge | beam')
-parser.add_argument('--data_dir', default='../sum_data/', help='directory that store the data.')
+parser.add_argument('--data_dir', default='src_data/sum_data_bytecup2018', help='directory that store the data.')
 parser.add_argument('--file_corpus', default='train.txt', help='file store training documents.')
 parser.add_argument('--file_val', default='val.txt', help='val data')
 parser.add_argument('--n_epoch', type=int, default=35, help='number of epochs.')
@@ -16,19 +16,15 @@ parser.add_argument('--val_num_batch', type=int, default=30, help='how many batc
 parser.add_argument('--nbestmodel', type=int, default=10, help='How many models you want to keep?')
 
 parser.add_argument('--continue_training', type=bool, default=True, help='Do you want to continue?')
-parser.add_argument('--train_base_model', type=bool, default=False,
-                    help='True: Use Pretrained Param | False: Transfer Learning')
-parser.add_argument('--use_move_avg', type=bool,
-                    default=False, help='move average')
-parser.add_argument('--use_optimal_model', type=bool,
-                    default=True, help='Do you want to use the best model?')
+parser.add_argument('--train_base_model', type=bool, default=False, help='True: Use Pretrained Param | False: Transfer Learning')
+parser.add_argument('--use_move_avg', type=bool, default=False, help='move average')
+parser.add_argument('--use_optimal_model', type=bool, default=True, help='Do you want to use the best model?')
 parser.add_argument('--model_optimal_key', default='0,0', help='epoch,batch')
-parser.add_argument('--is_lower', type=bool, default=True,
-                    help='convert all tokens to lower case?')
+parser.add_argument('--is_lower', type=bool, default=True, help='convert all tokens to lower case?')
 '''
 User specified parameters.
 '''
-parser.add_argument('--device', default=torch.device("cuda:0"), help='device')
+parser.add_argument('--device', default=torch.device("cpu"), help='device')   # cuda:0
 parser.add_argument('--file_vocab', default='vocab', help='file store training vocabulary.')
 parser.add_argument('--max_vocab_size', type=int, default=50000, help='max number of words in the vocabulary.')
 parser.add_argument('--word_minfreq', type=int, default=5, help='min word frequency')
