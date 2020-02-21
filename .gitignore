@@ -10,6 +10,11 @@ LeafNATS/tools/newsroom_process/extract_data/
 LeafNATS/tools/newsroom_process/plain_data/
 
 test/something_out.json
+test/1_out.json
+test/2_out.json
+test/3_out.json
+test/4_out.json
+test/5_out.json
 
 LeafNATS/__pycache__/
 LeafNATS/eval_scripts/__pycache__/
