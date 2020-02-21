@@ -228,6 +228,6 @@ class modelApp(modelPointerGenerator):
                 with open(fTmp+'_out.json', 'w') as fout:
                     json.dump(data_output, fout)
 
-                os.unlink(curr_file)
+                # os.unlink(curr_file)
 
 
