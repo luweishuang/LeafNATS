@@ -394,4 +394,3 @@ class natsEnd2EndBase(object):
         with torch.no_grad():
             while 1:
                 self.app_worker()
-                break
