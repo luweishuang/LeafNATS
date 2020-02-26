@@ -1,9 +1,9 @@
-import spacy, os
-import json, gzip
+import re
+import spacy
+import time
+nlp = spacy.load('en', disable=['tagger', 'ner'])
+from newsroom import jsonl
 from multiprocessing import Pool
-
-nlp = spacy.load('en_core_web_sm', disable=['tagger', 'ner'])
-
 
 def process_data(input_):
     article = input_['text']
@@ -36,51 +36,94 @@ def process_data(input_):
         sen_arr.append(sen)
     title = ' '.join(sen_arr)
     sen_arr = [title, summary, article]
+    
     return '<sec>'.join(sen_arr)
 
+fout = open('plain_data/test.txt', 'w')
+fp = jsonl.open('extract_data/test.data', gzip=True)
+cnt = 0
+batcher = []
+start = time.time()
+end = time.time()
+for line in fp:
+    cnt += 1
+    print(cnt, end-start)
+    batcher.append(line)
+    if len(batcher) == 64:
+        pool = Pool(processes=16)
+        result = pool.map(process_data, batcher)
+        pool.terminate()
+        for itm in result:
+            if len(itm) > 1:
+                fout.write(itm+'\n')
+        batcher = []
+        end = time.time()
 
-def process_curfile(fin_path, fout_path):
-    cnt = 0
+if len(batcher) > 0:
+    pool = Pool(processes=16)
+    result = pool.map(process_data, batcher)
+    pool.terminate()
+    for itm in result:
+        if len(itm) > 1:
+            fout.write(itm+'\n')
     batcher = []
-    fout = open(fout_path, 'w')
-    with gzip.open(fin_path) as fin:
-        for ln in fin:
-            line = json.loads(ln)
-            cnt += 1
-            batcher.append(line)
-            if len(batcher) == 64:
-                pool = Pool(processes=16)
-                result = pool.map(process_data, batcher)
-                pool.terminate()
-                for itm in result:
-                    if len(itm) > 1:
-                        fout.write(itm+'\n')
-                batcher = []
+fp.close()
+fout.close()
 
-        if len(batcher) > 0:
-            pool = Pool(processes=16)
-            result = pool.map(process_data, batcher)
-            pool.terminate()
-            for itm in result:
-                if len(itm) > 1:
-                    fout.write(itm+'\n')
-    fout.close()
-    return
+fout = open('plain_data/dev.txt', 'w')
+fp = jsonl.open('extract_data/dev.data', gzip=True)
+cnt = 0
+batcher = []
+for line in fp:
+    cnt += 1
+    print(cnt, end-start)
+    batcher.append(line)
+    if len(batcher) == 64:
+        pool = Pool(processes=16)
+        result = pool.map(process_data, batcher)
+        pool.terminate()
+        for itm in result:
+            if len(itm) > 1:
+                fout.write(itm+'\n')
+        batcher = []
+        end = time.time()
 
+if len(batcher) > 0:
+    pool = Pool(processes=16)
+    result = pool.map(process_data, batcher)
+    pool.terminate()
+    for itm in result:
+        if len(itm) > 1:
+            fout.write(itm+'\n')
+    batcher = []
+fp.close()
+fout.close()
 
-current_path = os.path.abspath(__file__)
-father_path = os.path.abspath(os.path.dirname(current_path))  # 获取当前文件的父目录
-repo_dir = os.path.abspath(os.path.dirname(current_path) + os.path.sep + "../../../")
-src_data_dir = os.path.join(repo_dir, 'src_data/newsroom')
+fout = open('plain_data/train.txt', 'w')
+fp = jsonl.open('extract_data/train.data', gzip=True)
+cnt = 0
+batcher = []
+for line in fp:
+    cnt += 1
+    print(cnt, end-start)
+    batcher.append(line)
+    if len(batcher) == 64:
+        pool = Pool(processes=16)
+        result = pool.map(process_data, batcher)
+        pool.terminate()
+        for itm in result:
+            if len(itm) > 1:
+                fout.write(itm+'\n')
+        batcher = []
+        end = time.time()
 
-fin_path = os.path.join(src_data_dir, 'test.jsonl.gz')
-fout_path = 'plain_data/test.txt'
-process_curfile(fin_path, fout_path)
-
-fin_path = os.path.join(src_data_dir, 'dev.jsonl.gz')
-fout_path = 'plain_data/dev.txt'
-process_curfile(fin_path, fout_path)
-
-fin_path = os.path.join(src_data_dir, 'train.jsonl.gz')
-fout_path = 'plain_data/train.txt'
-process_curfile(fin_path, fout_path)
+if len(batcher) > 0:
+    pool = Pool(processes=16)
+    result = pool.map(process_data, batcher)
+    pool.terminate()
+    for itm in result:
+        if len(itm) > 1:
+            fout.write(itm+'\n')
+    batcher = []
+fp.close()
+fout.close()

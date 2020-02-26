@@ -18,12 +18,6 @@
 
 #### Step 1
 Download pretrain model from https://drive.google.com/open?id=1A7ODPpermwIHeRrnqvalT5zpr4BCTBi9
-
-#### Step 1_1
-pip install spacy
-pip install /path/to/****/en_core_web_sm-2.2.5.tar.gz(当前spacy的版本是2.2.3)
-conda install pytorch=1.3 torchvision cudatoolkit=10.1 -c pytorch (指定pytorch的版本，否则默认下载最新版。anaconda3/pkgs如果存在pytorch版本相适应的文件，可以免下载安装)
-
 #### Step 2
 Create a folder such as ```data```.
 #### Step 3

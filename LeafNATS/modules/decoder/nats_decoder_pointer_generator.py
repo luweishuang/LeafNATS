@@ -1,3 +1,7 @@
+'''
+@author Tian Shi
+Please contact tshi@vt.edu
+'''
 import torch
 from torch.autograd import Variable
 
@@ -105,9 +109,11 @@ class PointerGeneratorDecoder(torch.nn.Module):
             # attention decoder
             if self.attn_decoder:
                 if k + idx == 0:
-                    c_decoder = Variable(torch.zeros(batch_size, self.trg_hidden_size)).to(self.device)
+                    c_decoder = Variable(torch.zeros(
+                        batch_size, self.trg_hidden_size)).to(self.device)
                 else:
-                    c_decoder, _ = self.decoder_attn_layer(hhh_, past_dehy)
+                    c_decoder, _ = self.decoder_attn_layer(
+                        hhh_, past_dehy)
                 past_dehy = past_dehy.transpose(0, 1)  # seqL*batch*hidden
                 de_idx = past_dehy.size(0)
                 if k + idx == 0:
@@ -117,15 +123,18 @@ class PointerGeneratorDecoder(torch.nn.Module):
                     past_dehy = past_dehy.contiguous().view(-1, self.trg_hidden_size)  # seqL*batch**hidden
                     # (seqL+1)*batch**hidden
                     past_dehy = torch.cat((past_dehy, hhh_), 0)
-                    past_dehy = past_dehy.view(de_idx+1, batch_size, self.trg_hidden_size)  # (seqL+1)*batch*hidden
-                    past_dehy = past_dehy.transpose(0, 1)  # batch*(seqL+1)*hidden
+                    past_dehy = past_dehy.view(
+                        de_idx+1, batch_size, self.trg_hidden_size)  # (seqL+1)*batch*hidden
+                    past_dehy = past_dehy.transpose(
+                        0, 1)  # batch*(seqL+1)*hidden
                 h_attn = self.attn_out(
                     torch.cat((c_encoder, c_decoder, hhh_), 1))
             else:
                 h_attn = self.attn_out(torch.cat((c_encoder, hhh_), 1))
             # repetition
             if self.repetition == 'asee_train':
-                lscv = torch.cat((past_attn.unsqueeze(2), attn.unsqueeze(2)), 2)
+                lscv = torch.cat(
+                    (past_attn.unsqueeze(2), attn.unsqueeze(2)), 2)
                 lscv = lscv.min(dim=2)[0]
                 try:
                     loss_cv = loss_cv + torch.mean(lscv)
@@ -143,14 +152,19 @@ class PointerGeneratorDecoder(torch.nn.Module):
             # pointer
             if self.pointer_net:
                 if self.attn_decoder:
-                    pt_input = torch.cat((input_[k], hhh_, c_encoder, c_decoder), 1)
+                    pt_input = torch.cat(
+                        (input_[k], hhh_, c_encoder, c_decoder), 1)
                 else:
                     pt_input = torch.cat((input_[k], hhh_, c_encoder), 1)
                 p_gen[:, k] = torch.sigmoid(self.pt_out(pt_input).squeeze(1))
 
         len_seq = input_.size(0)
         batch_size, hidden_size = output_[0].size()
-        output_ = torch.cat(output_, 0).view(len_seq, batch_size, hidden_size)
-        out_attn = torch.cat(out_attn, 0).view(len_seq, attn.size(0), attn.size(1))
+        output_ = torch.cat(output_, 0).view(
+            len_seq, batch_size, hidden_size)
+        out_attn = torch.cat(out_attn, 0).view(
+            len_seq, attn.size(0), attn.size(1))
+
         output_ = output_.transpose(0, 1)
+
         return output_, hidden_, h_attn, out_attn, past_attn, p_gen, past_dehy, loss_cv

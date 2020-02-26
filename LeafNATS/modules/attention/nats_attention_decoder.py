@@ -1,4 +1,9 @@
+'''
+@author Tian Shi
+Please contact tshi@vt.edu
+'''
 import torch
+from torch.autograd import Variable
 
 
 class AttentionDecoder(torch.nn.Module):
@@ -44,7 +49,8 @@ class AttentionDecoder(torch.nn.Module):
         '''
         # attention score
         if self.method == 'luong_concat':
-            attn_agg = self.attn_en_in(past_hy) + self.attn_de_in(dehy.unsqueeze(1))
+            attn_agg = self.attn_en_in(
+                past_hy) + self.attn_de_in(dehy.unsqueeze(1))
             attn_agg = torch.tanh(attn_agg)
             attn = self.attn_warp_in(attn_agg).squeeze(2)
         else:

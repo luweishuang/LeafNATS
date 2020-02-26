@@ -1,4 +1,13 @@
+'''
+@author Tian Shi
+Please contact tshi@vt.edu
+'''
 import sys
+import time
+import numpy as np
+
+import torch
+from torch.autograd import Variable
 
 
 def word_copy(args,  beam_seq,

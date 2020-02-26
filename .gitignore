@@ -20,6 +20,9 @@ test/5_out-cpu-no-clone.json
 test/5_out-gpu-clone.json
 test/5_out-gpu-no-clone.json
 
+LeafNATS/__init__.pyc
+LeafNATS/modules/utils/__pycache__/
+dmsc/__pycache__/
 LeafNATS/__pycache__/
 LeafNATS/eval_scripts/__pycache__/
 LeafNATS/data/__pycache__/

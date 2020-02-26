@@ -1,4 +1,9 @@
+'''
+@author Tian Shi
+Please contact tshi@vt.edu
+'''
 import torch
+from torch.autograd import Variable
 
 
 class AttentionEncoder(torch.nn.Module):
@@ -32,17 +37,24 @@ class AttentionEncoder(torch.nn.Module):
 
         if self.method == 'luong_concat':
             if src_hidden_doubled:
-                self.attn_en_in = torch.nn.Linear(src_hidden_size*2, trg_hidden_size)
+                self.attn_en_in = torch.nn.Linear(
+                    src_hidden_size*2, trg_hidden_size)
             else:
-                self.attn_en_in = torch.nn.Linear(src_hidden_size, trg_hidden_size)
-            self.attn_de_in = torch.nn.Linear(trg_hidden_size, trg_hidden_size, bias=False)
-            self.attn_cv_in = torch.nn.Linear(1, trg_hidden_size, bias=False)
-            self.attn_warp_in = torch.nn.Linear(trg_hidden_size, 1, bias=False)
+                self.attn_en_in = torch.nn.Linear(
+                    src_hidden_size, trg_hidden_size)
+            self.attn_de_in = torch.nn.Linear(
+                trg_hidden_size, trg_hidden_size, bias=False)
+            self.attn_cv_in = torch.nn.Linear(
+                1, trg_hidden_size, bias=False)
+            self.attn_warp_in = torch.nn.Linear(
+                trg_hidden_size, 1, bias=False)
         if self.method == 'luong_general':
             if src_hidden_doubled:
-                self.attn_in = torch.nn.Linear(src_hidden_size*2, trg_hidden_size, bias=False)
+                self.attn_in = torch.nn.Linear(
+                    src_hidden_size*2, trg_hidden_size, bias=False)
             else:
-                self.attn_in = torch.nn.Linear(src_hidden_size, trg_hidden_size, bias=False)
+                self.attn_in = torch.nn.Linear(
+                    src_hidden_size, trg_hidden_size, bias=False)
 
     def forward(self, dehy, enhy, past_attn, src_mask=None):
         '''
@@ -52,7 +64,8 @@ class AttentionEncoder(torch.nn.Module):
         '''
         # attention score
         if self.method == 'luong_concat':
-            attn_agg = self.attn_en_in(enhy) + self.attn_de_in(dehy.unsqueeze(1))
+            attn_agg = self.attn_en_in(
+                enhy) + self.attn_de_in(dehy.unsqueeze(1))
             if self.repetition[:4] == 'asee':
                 attn_agg = attn_agg + self.attn_cv_in(past_attn.unsqueeze(2))
             attn_agg = torch.tanh(attn_agg)
