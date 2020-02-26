@@ -17,7 +17,7 @@ class natsEmbedding(torch.nn.Module):
         '''
         if share_emb_weight:
             self.proj2vocab = torch.nn.Linear(emb_dim, vocab_size)
-            self.proj2vocab.weight.data = self.embedding.weight.data
+            self.proj2vocab.weight.data = self.embedding.weight.data.clone()    # deep copy !!!!
 
     def get_embedding(self, input_):
         '''
