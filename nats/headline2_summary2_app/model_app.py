@@ -226,7 +226,7 @@ class modelApp(modelPointerGenerator):
 
                 print('Write {}.'.format(fTmp+'_out.json'))
                 with open(fTmp+'_out.json', 'w') as fout:
-                    json.dump(data_output, fout)
+                    json.dump(data_output, fout, indent=4)
 
                 # os.unlink(curr_file)
 
