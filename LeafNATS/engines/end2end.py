@@ -1,19 +1,14 @@
-'''
-@author Tian Shi
-Please contact tshi@vt.edu
-'''
+#! -*- coding: utf-8 -*-
+
 import glob
-import json
 import os
 import pickle
 import re
 import shutil
 import time
 from pprint import pprint
-
 import numpy as np
 import torch
-from torch.autograd import Variable
 
 from LeafNATS.data.utils import create_batch_file
 from LeafNATS.utils.utils import show_progress
@@ -106,6 +101,7 @@ class natsEnd2EndBase(object):
         self.build_vocabulary()
         self.build_models()
         print(self.base_models)
+        print('---------base_models-----------|-----------train_models---------------')
         print(self.train_models)
         if len(self.base_models) > 0:
             self.init_base_model_params()
@@ -125,7 +121,8 @@ class natsEnd2EndBase(object):
         optimizer = self.build_optimizer(params)
         # load checkpoint
         uf_model = [0, -1]
-        out_dir = os.path.join('..', 'nats_results')
+        out_dir = os.path.join('../', 'nats_results')
+        # print("out_dir: ", os.path.abspath(out_dir))
         if not os.path.exists(out_dir):
             os.mkdir(out_dir)
         if self.args.continue_training:
@@ -157,20 +154,18 @@ class natsEnd2EndBase(object):
                 print(
                     'Continue training with *_{}_{}.model'.format(cc_model[0], cc_model[1]))
                 uf_model = cc_model
-
         else:
             shutil.rmtree(out_dir)
             os.mkdir(out_dir)
         # train models
-        fout = open('../nats_results/args.pickled', 'wb')
-        pickle.dump(self.args, fout)
-        fout.close()
+        with open('../nats_results/args.pickled', 'wb') as fout:
+            pickle.dump(self.args, fout)
         start_time = time.time()
         cclb = 0
         for epoch in range(uf_model[0], self.args.n_epoch):
             n_batch = create_batch_file(
                 path_data=self.args.data_dir,
-                path_work=os.path.join('..', 'nats_results'),
+                path_work=os.path.join('../', 'nats_results'),
                 is_shuffle=True,
                 fkey_=self.args.task,
                 file_=self.args.file_corpus,
@@ -186,8 +181,8 @@ class natsEnd2EndBase(object):
                 else:
                     cclb += 1
 
-                self.build_batch(batch_id)
-                loss = self.build_pipelines()
+                self.build_batch(batch_id)       # 处理当前batch里的数据, tokenlize
+                loss = self.build_pipelines()    # 处理整个数据流并建立loss
 
                 optimizer.zero_grad()
                 loss.backward()
@@ -197,12 +192,10 @@ class natsEnd2EndBase(object):
                 end_time = time.time()
                 if batch_id % self.args.checkpoint == 0:
                     for model_name in self.train_models:
-                        fmodel = open(os.path.join(
-                            out_dir, model_name+'_'+str(epoch)+'_'+str(batch_id)+'.model'), 'wb')
-                        torch.save(
-                            self.train_models[model_name].state_dict(), fmodel)
+                        fmodel = open(os.path.join(out_dir, model_name+'_'+str(epoch)+'_'+str(batch_id)+'.model'), 'wb')
+                        torch.save(self.train_models[model_name].state_dict(), fmodel)
                         fmodel.close()
-                if batch_id % 1 == 0:
+                if batch_id % 100 == 0:
                     end_time = time.time()
                     print('epoch={}, batch={}, loss={}, time_escape={}s={}h'.format(
                         epoch, batch_id,
@@ -213,8 +206,7 @@ class natsEnd2EndBase(object):
                 del loss
 
             for model_name in self.train_models:
-                fmodel = open(os.path.join(
-                    out_dir, model_name+'_'+str(epoch)+'_'+str(batch_id)+'.model'), 'wb')
+                fmodel = open(os.path.join(out_dir, model_name+'_'+str(epoch)+'_'+str(batch_id)+'.model'), 'wb')
                 torch.save(self.train_models[model_name].state_dict(), fmodel)
                 fmodel.close()
 
@@ -226,6 +218,7 @@ class natsEnd2EndBase(object):
         self.build_vocabulary()
         self.build_models()
         pprint(self.base_models)
+        print('---------base_models-----------|-----------train_models---------------')
         pprint(self.train_models)
         if len(self.base_models) > 0:
             self.init_base_model_params()
@@ -236,8 +229,7 @@ class natsEnd2EndBase(object):
             fp = open(val_file, 'r')
             for line in fp:
                 arr = re.split(r'\s', line[:-1])
-                best_arr.append(
-                    [arr[0], arr[1], arr[2], float(arr[3]), float(arr[4])])
+                best_arr.append([arr[0], arr[1], arr[2], float(arr[3]), float(arr[4])])
             fp.close()
 
         for model_name in self.base_models:
@@ -246,9 +238,7 @@ class natsEnd2EndBase(object):
             self.train_models[model_name].eval()
         with torch.no_grad():
             while 1:
-                model_para_files = []
-                model_para_files = glob.glob(os.path.join(
-                    '..', 'nats_results', sorted(list(self.train_models))[0]+'*.model'))
+                model_para_files = glob.glob(os.path.join('..', 'nats_results', sorted(list(self.train_models))[0]+'*.model'))
                 for j in range(len(model_para_files)):
                     arr = re.split(r'\_|\.', model_para_files[j])
                     arr = [int(arr[-3]), int(arr[-2]), model_para_files[j]]
@@ -267,11 +257,8 @@ class natsEnd2EndBase(object):
                         time.sleep(3)
                         try:
                             for model_name in self.train_models:
-                                fl_tmp = os.path.join(
-                                    '..', 'nats_results',
-                                    model_name+'_'+str(fl_[0])+'_'+str(fl_[1])+'.model')
-                                self.train_models[model_name].load_state_dict(
-                                    torch.load(fl_tmp, map_location=lambda storage, loc: storage))
+                                fl_tmp = os.path.join('..', 'nats_results', model_name+'_'+str(fl_[0])+'_'+str(fl_[1])+'.model')
+                                self.train_models[model_name].load_state_dict(torch.load(fl_tmp, map_location=lambda storage, loc: storage))
                         except:
                             continue
                     else:
@@ -288,7 +275,6 @@ class natsEnd2EndBase(object):
                     if self.args.val_num_batch > val_batch:
                         self.args.val_num_batch = val_batch
                     for batch_id in range(self.args.val_num_batch):
-
                         self.build_batch(batch_id)
                         loss = self.build_pipelines()
 
@@ -299,14 +285,12 @@ class natsEnd2EndBase(object):
                     end_time = time.time()
                     if self.args.use_move_avg:
                         try:
-                            losses_out = 0.9*losses_out + \
-                                0.1*np.average(losses)
+                            losses_out = 0.9*losses_out + 0.1*np.average(losses)
                         except:
                             losses_out = np.average(losses)
                     else:
                         losses_out = np.average(losses)
-                    best_arr.append(
-                        [fl_[2], fl_[0], fl_[1], losses_out, end_time-start_time])
+                    best_arr.append([fl_[2], fl_[0], fl_[1], losses_out, end_time-start_time])
                     best_arr = sorted(best_arr, key=lambda bb: bb[3])
                     if best_arr[0][0] == fl_[2]:
                         out_dir = os.path.join('..', 'nats_results', 'model')
@@ -316,25 +300,19 @@ class natsEnd2EndBase(object):
                             pass
                         os.mkdir(out_dir)
                         for model_name in self.base_models:
-                            fmodel = open(os.path.join(
-                                out_dir, model_name+'.model'), 'wb')
-                            torch.save(
-                                self.base_models[model_name].state_dict(), fmodel)
+                            fmodel = open(os.path.join(out_dir, model_name+'.model'), 'wb')
+                            torch.save(self.base_models[model_name].state_dict(), fmodel)
                             fmodel.close()
                         for model_name in self.train_models:
-                            fmodel = open(os.path.join(
-                                out_dir, model_name+'.model'), 'wb')
-                            torch.save(
-                                self.train_models[model_name].state_dict(), fmodel)
+                            fmodel = open(os.path.join(out_dir, model_name+'.model'), 'wb')
+                            torch.save(self.train_models[model_name].state_dict(), fmodel)
                             fmodel.close()
                         try:
-                            shutil.copy2(os.path.join(
-                                self.args.data_dir, self.args.file_vocab), out_dir)
+                            shutil.copy2(os.path.join(self.args.data_dir, self.args.file_vocab), out_dir)
                         except:
                             pass
                     for itm in best_arr[:self.args.nbestmodel]:
-                        print('model={}_{}, loss={}, time={}'.format(
-                            itm[1], itm[2], itm[3], itm[4]))
+                        print('model={}_{}, loss={}, time={}'.format(itm[1], itm[2], itm[3], itm[4]))
 
                     for itm in best_arr[self.args.nbestmodel:]:
                         tarr = re.split(r'_|\.', itm[0])
@@ -342,16 +320,13 @@ class natsEnd2EndBase(object):
                             continue
                         if os.path.exists(itm[0]):
                             for model_name in self.train_models:
-                                fl_tmp = os.path.join(
-                                    '..', 'nats_results',
-                                    model_name+'_'+str(itm[1])+'_'+str(itm[2])+'.model')
+                                fl_tmp = os.path.join('..', 'nats_results', model_name+'_'+str(itm[1])+'_'+str(itm[2])+'.model')
                                 os.unlink(fl_tmp)
                     fout = open(val_file, 'w')
                     for itm in best_arr:
                         if len(itm) == 0:
                             continue
-                        fout.write(' '.join([itm[0], str(itm[1]), str(
-                            itm[2]), str(itm[3]), str(itm[4])])+'\n')
+                        fout.write(' '.join([itm[0], str(itm[1]), str(itm[2]), str(itm[3]), str(itm[4])])+'\n')
                     fout.close()
 
     def test(self):
@@ -382,27 +357,21 @@ class natsEnd2EndBase(object):
             self.train_models[model_name].eval()
         with torch.no_grad():
             if self.args.use_optimal_model:
-                model_valid_file = os.path.join(
-                    '..', 'nats_results', 'model_validate.txt')
+                model_valid_file = os.path.join('..', 'nats_results', 'model_validate.txt')
                 fp = open(model_valid_file, 'r')
                 for line in fp:
                     arr = re.split(r'\s', line[:-1])
-                    model_optimal_key = ''.join(
-                        ['_', arr[1], '_', arr[2], '.model'])
+                    model_optimal_key = ''.join(['_', arr[1], '_', arr[2], '.model'])
                     break
                 fp.close()
             else:
                 arr = re.split(r'\D', self.args.model_optimal_key)
-                model_optimal_key = ''.join(
-                    ['_', arr[0], '_', arr[1], '.model'])
+                model_optimal_key = ''.join(['_', arr[0], '_', arr[1], '.model'])
             print("You choose to use *{} for decoding.".format(model_optimal_key))
 
             for model_name in self.train_models:
-                model_optimal_file = os.path.join(
-                    '..', 'nats_results', model_name+model_optimal_key)
-                self.train_models[model_name].load_state_dict(torch.load(
-                    model_optimal_file, map_location=lambda storage, loc: storage))
-
+                model_optimal_file = os.path.join('..', 'nats_results', model_name+model_optimal_key)
+                self.train_models[model_name].load_state_dict(torch.load(model_optimal_file, map_location=lambda storage, loc: storage))
             self.test_worker(_nbatch)
             print()
 
@@ -411,8 +380,9 @@ class natsEnd2EndBase(object):
         For the application.
         Don't overwrite.
         '''
-        self.build_vocabulary()
-        self.build_models()
+        self.build_vocabulary()    # 构建字典 vocab2id, id2vocab **
+        self.build_models()        # 构建网络结构     encoder | encoder2decoder | pgdecoder | decoder2proj  ++  newsroom_title | bytecup_title | newsroom_summary | cnndm_summary
+
         for model_name in self.train_models:
             self.base_models[model_name] = self.train_models[model_name]
         pprint(self.base_models)
@@ -424,3 +394,4 @@ class natsEnd2EndBase(object):
         with torch.no_grad():
             while 1:
                 self.app_worker()
+                break

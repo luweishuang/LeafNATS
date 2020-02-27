@@ -37,7 +37,7 @@ def process_data(input_):
     return '<sec>'.join(sen_arr)
 
 fout = open('plain_data/test.txt', 'w')
-fp = jsonl.open('extract_data/test.data', gzip=True)
+fp = jsonl.open('extract_data/test.jsonl', gzip=True)
 cnt = 0
 batcher = []
 for line in fp:
@@ -63,6 +63,9 @@ if len(batcher) > 0:
     batcher = []
 fp.close()
 fout.close()
+
+exit()
+
 
 fout = open('plain_data/dev.txt', 'w')
 fp = jsonl.open('extract_data/dev.data', gzip=True)

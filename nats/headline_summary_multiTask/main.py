@@ -99,7 +99,7 @@ parser.add_argument('--file_output', default='summary.txt',
 # for app
 parser.add_argument('--app_model_dir', default='../model/',
                     help='directory that stores models.')
-parser.add_argument('--app_data_dir', default='/var/www/html/leafNATS/tmp',
+parser.add_argument('--app_data_dir', default='../data',
                     help='directory that stores data.')
 
 args = parser.parse_args()
