@@ -232,8 +232,8 @@ class modelApp(modelPointerGenerator):
                     if wd == '<stop>':
                         break
                     if wd != '<s>' and wd != '</s>':
-                        # out_arr.append({"key": wd, "attention": beam_out[idx].tolist()})
-                        out_arr.append({"key": wd})
+                        out_arr.append(
+                            {"key": wd,})
                 data_input[self.args.task_key] = out_arr
 
                 self.args.task_key = 'newsroom_summary'
@@ -252,8 +252,8 @@ class modelApp(modelPointerGenerator):
                     if wd == '<stop>':
                         break
                     if wd != '<s>' and wd != '</s>':
-                        # out_arr.append({"key": wd, "attention": beam_out[idx].tolist()})
-                        out_arr.append({"key": wd})
+                        out_arr.append(
+                            {"key": wd,})
                 data_input[self.args.task_key] = out_arr
 
                 self.args.task_key = 'cnndm_summary'
@@ -272,8 +272,8 @@ class modelApp(modelPointerGenerator):
                     if wd == '<stop>':
                         break
                     if wd != '<s>' and wd != '</s>':
-                        # out_arr.append({"key": wd, "attention": beam_out[idx].tolist()})
-                        out_arr.append({"key": wd})
+                        out_arr.append(
+                            {"key": wd,})
                 data_input[self.args.task_key] = out_arr
 
                 self.args.task_key = 'bytecup_title'
@@ -292,8 +292,8 @@ class modelApp(modelPointerGenerator):
                     if wd == '<stop>':
                         break
                     if wd != '<s>' and wd != '</s>':
-                        # out_arr.append({"key": wd, "attention": beam_out[idx].tolist()})
-                        out_arr.append({"key": wd})
+                        out_arr.append(
+                            {"key": wd,})
                 data_input[self.args.task_key] = out_arr
 
                 print('Write {}.'.format(fTmp+'_out.json'))

@@ -24,7 +24,8 @@ class natsEmbedding(torch.nn.Module):
         For embedding weight sharing.
         '''
         if share_emb_weight:
-            self.proj2vocab = torch.nn.Linear(emb_dim, vocab_size)
+            self.proj2vocab = torch.nn.Linear(
+                emb_dim, vocab_size)
             self.proj2vocab.weight.data = self.embedding.weight.data
 
     def get_embedding(self, input_):
