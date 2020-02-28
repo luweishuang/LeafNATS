@@ -179,6 +179,7 @@ class modelApp(modelPointerGenerator):
                 article = ' '.join([wd.text for wd in article])
                 article = re.split('\s', article)
                 article = list(filter(None, article))
+                print(len(article))
                 data_input['content_token'] = article
                 self.args.src_seq_lens = len(article)
 
