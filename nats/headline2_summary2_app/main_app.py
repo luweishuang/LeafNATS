@@ -31,9 +31,9 @@ parser.add_argument('--word_minfreq', type=int, default=5, help='min word freque
 parser.add_argument('--emb_dim', type=int, default=128, help='source embedding dimension')
 parser.add_argument('--src_hidden_dim', type=int, default=256, help='encoder hidden dimension')
 parser.add_argument('--trg_hidden_dim', type=int, default=256, help='decoder hidden dimension')
-parser.add_argument('--src_seq_lens', type=int, default=400, help='length of source documents.')
-parser.add_argument('--sum_seq_lens', type=int, default=100, help='length of target documents.')
-parser.add_argument('--ttl_seq_lens', type=int, default=20, help='length of target documents.')
+parser.add_argument('--src_seq_lens', type=int, default=1000, help='length of source documents.')   # !!! 有可能被覆盖写
+parser.add_argument('--sum_seq_lens', type=int, default=300, help='length of target documents.')   # 限制生成摘要的最长长度
+parser.add_argument('--ttl_seq_lens', type=int, default=20, help='length of target documents.')    # 限制生成标题的最长长度
 
 parser.add_argument('--rnn_network', default='lstm', help='gru | lstm')
 parser.add_argument('--attn_method', default='luong_concat', help='luong_concat | luong_general')

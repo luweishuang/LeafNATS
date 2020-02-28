@@ -1,3 +1,5 @@
+#! -*- coding: utf-8 -*-
+
 import json
 import spacy
 import glob
@@ -13,7 +15,6 @@ from nats.pointer_generator_network.model import modelPointerGenerator
 
 from .beam_search import fast_beam_search
 nlp = spacy.load('en_core_web_sm', disable=['logging', 'ner'])
-
 
 class modelApp(modelPointerGenerator):
     def __init__(self, args):
@@ -177,9 +178,9 @@ class modelApp(modelPointerGenerator):
                 data_output['content'] = data_input['content']
                 article = nlp(data_input['content'].lower())
                 article = ' '.join([wd.text for wd in article])
+                # l1 = data_input['content'].lower()   # 与article长度不一致，更短
                 article = re.split('\s', article)
                 article = list(filter(None, article))
-                print(len(article))
                 data_input['content_token'] = article
                 self.args.src_seq_lens = len(article)
 
@@ -216,14 +217,14 @@ class modelApp(modelPointerGenerator):
                     data_input[cur_task_key] = out_arr
                     data_output[cur_task_key] = ' '.join(out_arr)
 
-                self.args.task_key = 'newsroom_title'
-                inner_func(self.args.task_key)
-                self.args.task_key = 'newsroom_summary'
-                inner_func(self.args.task_key)
+                # self.args.task_key = 'newsroom_title'
+                # inner_func(self.args.task_key)
+                # self.args.task_key = 'newsroom_summary'
+                # inner_func(self.args.task_key)
                 self.args.task_key = 'cnndm_summary'
                 inner_func(self.args.task_key)
-                self.args.task_key = 'bytecup_title'
-                inner_func(self.args.task_key)
+                # self.args.task_key = 'bytecup_title'
+                # inner_func(self.args.task_key)
 
                 print('Write {}.'.format(fTmp+'_out.json'))
                 with open(fTmp+'_out.json', 'w') as fout:
