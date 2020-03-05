@@ -93,6 +93,14 @@ class natsEnd2EndBase(object):
         '''
         raise NotImplementedError
 
+
+    def app_worker_func(self, content_in):
+        '''
+        For application.
+        '''
+        raise NotImplementedError
+
+
     def train(self):
         '''
         training here.
@@ -385,13 +393,19 @@ class natsEnd2EndBase(object):
 
         for model_name in self.train_models:
             self.base_models[model_name] = self.train_models[model_name]
-        pprint(self.base_models)
+        # pprint(self.base_models)
         if len(self.base_models) > 0:
             self.init_base_model_params()
 
         for model_name in self.base_models:
             self.base_models[model_name].eval()
+        # with torch.no_grad():
+        #     while 1:
+        #         self.app_worker()
+        #         break
+
+
+    def app2Go_process(self, content_in):
         with torch.no_grad():
-            while 1:
-                self.app_worker()
-                break
+            summary_out = self.app_worker_func(content_in)
+            return summary_out
